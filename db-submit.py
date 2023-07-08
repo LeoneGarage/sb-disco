@@ -47,7 +47,7 @@ def run(args=None):
   if packages is not None:
     packages = packages.split(",")
   jobs = Jobs(api_url=profile["DATABRICKS_HOST"], token=profile["DATABRICKS_TOKEN"])
-  jobs.create_python_job(job_name=app_name.replace(":", "_").replace(".", "_"),
+  job_id = jobs.create_python_job(job_name=app_name.replace(":", "_").replace(".", "_"),
                          bootstrap_copy_notebook_path="bootstrap_copy",
                          source_zip=args.source_zip,
                          dest_zip=args.dest_zip,
@@ -59,6 +59,10 @@ def run(args=None):
                          libraries=py_files,
                          packages=packages,
                          spark_conf=spark_conf)
+  run_id = jobs.run_now(job_id)["run_id"]
+  result = jobs.wait_get_run_job_terminated_or_skipped(run_id)
+  state = result["state"]["result_state"]
+  return state
 
 if __name__ == "__main__":
   run()

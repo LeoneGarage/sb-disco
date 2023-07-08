@@ -1,5 +1,13 @@
 import requests
 import copy
+import time
+import random
+
+class OperationFailed(RuntimeError):
+  pass
+
+class TimeoutError(RuntimeError):
+  pass
 
 class Jobs:
   _api_url = None
@@ -39,6 +47,54 @@ class Jobs:
     j = self.get_job_by_name(name)
     response = self.send_job_request('reset', lambda u, h: requests.post(f'{u}', json=job_config, headers=h))
     return response
+
+  def get_run(self, run_id):
+    response = self.send_job_request('runs/get', lambda u, h: requests.get(f'{u}?run_id={run_id}', headers=h))
+    return response
+  
+  def run_now(self, job_id):
+    job_config = {
+      "job_id": job_id
+    }
+    response = self.send_job_request('run-now', lambda u, h: requests.post(f'{u}', json=job_config, headers=h))
+    return response
+
+  def wait_get_run_job_terminated_or_skipped(self,
+                                             run_id,
+                                             timeout=None,#timedelta(minutes=20),
+                                             callback = None):
+    deadline = time.time()
+    if timeout is not None:
+      deadline += timeout.total_seconds()
+    target_states = ("TERMINATED", "SKIPPED", )
+    failure_states = ("INTERNAL_ERROR", )
+    status_message = 'polling...'
+    attempt = 1
+    while timeout is None or time.time() < deadline:
+        poll = self.get_run(run_id=run_id)
+        state = poll.get("state")
+        status = None
+        if state is not None:
+          status = state.get("life_cycle_state")
+        status_message = f'current status: {status}'
+        if state is not None:
+            status_message = state.get("state_message")
+        if status in target_states:
+            return poll
+        if callback:
+            callback(poll)
+        if status in failure_states:
+            msg = f'failed to reach TERMINATED or SKIPPED, got {status}: {status_message}'
+            raise OperationFailed(msg)
+        prefix = f"run_id={run_id}"
+        sleep = attempt
+        if sleep > 10:
+            # sleep 10s max per attempt
+            sleep = 10
+        # _LOG.debug(f'{prefix}: ({status}) {status_message} (sleeping ~{sleep}s)')
+        time.sleep(sleep + random.random())
+        attempt += 1
+    raise TimeoutError(f'timed out after {timeout}: {status_message}')
 
   def create_python_job(self,
                         job_name,
