@@ -40,7 +40,14 @@ class Jobs:
     response = self.send_job_request('reset', lambda u, h: requests.post(f'{u}', json=job_config, headers=h))
     return response
 
-  def create_python_job(self, job_name,
+  def create_python_job(self,
+                        job_name,
+                        bootstrap_copy_notebook_path,
+                        source_zip,
+                        dest_zip,
+                        git_url,
+                        git_provider="gitHub",
+                        git_branch="main",
                         python_file,
                         parameters=None,
                         min_workers = None,
@@ -70,10 +77,26 @@ class Jobs:
       "timeout_seconds":0,
       "max_concurrent_runs":1,
       "tasks":[
+        {"task_key":"bootstrap_copy",
+        "notebook_task": {
+          "notebook_path": f"{bootstrap_copy_notebook_path}",
+          "source": "GIT",
+          "base_parameters": {
+            "source": f"{source_zip}",
+            "dest": f"{dest_zip}"
+          }
+        },
+        "job_cluster_key":f"{job_name}_cluster",
+        "timeout_seconds":0,
+        "email_notifications":{}
+        },
         {"task_key":f"{job_name}",
         "spark_python_task":{
           "python_file":python_file,
           "parameters":parameters
+        },
+        "depends_on":{
+          "task_key": "bootstrap"
         },
         "libraries":libraries + packages,
         "job_cluster_key":f"{job_name}_cluster",
@@ -108,6 +131,11 @@ class Jobs:
           "num_workers":f"{max_workers}"
         }
         }],
+        "git_source": {
+            "git_url": f"{git_url}",
+            "git_provider": f"{git_provider}",
+            "git_branch": f"{git_branch}"
+        }
       "format":"MULTI_TASK"
     }
     if min_workers == max_workers:
