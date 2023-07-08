@@ -149,9 +149,9 @@ class Jobs:
         "job_id": job_id,
         "new_settings": job_config
       }
-      print(job_config)
       response = self.send_job_request('reset', lambda u, h: requests.post(f'{u}', json=job_config, headers=h))
+      return job_id
     else:
-      print(job_config)
       response = self.send_job_request('create', lambda u, h: requests.post(f'{u}', json=job_config, headers=h))
+      return response["job_id"]
     return response
