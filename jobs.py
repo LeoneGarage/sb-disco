@@ -42,13 +42,13 @@ class Jobs:
 
   def create_python_job(self,
                         job_name,
+                        python_file,
                         bootstrap_copy_notebook_path,
                         source_zip,
                         dest_zip,
                         git_url,
                         git_provider="gitHub",
                         git_branch="main",
-                        python_file,
                         parameters=None,
                         min_workers = None,
                         max_workers = None,
@@ -96,7 +96,7 @@ class Jobs:
           "parameters":parameters
         },
         "depends_on":{
-          "task_key": "bootstrap"
+          "task_key": "bootstrap_copy"
         },
         "libraries":libraries + packages,
         "job_cluster_key":f"{job_name}_cluster",
@@ -130,12 +130,12 @@ class Jobs:
           },
           "num_workers":f"{max_workers}"
         }
-        }],
-        "git_source": {
-            "git_url": f"{git_url}",
-            "git_provider": f"{git_provider}",
-            "git_branch": f"{git_branch}"
-        }
+      }],
+      "git_source": {
+          "git_url": f"{git_url}",
+          "git_provider": f"{git_provider}",
+          "git_branch": f"{git_branch}"
+      },
       "format":"MULTI_TASK"
     }
     if min_workers == max_workers:
