@@ -1,0 +1,58 @@
+#!/usr/bin/env python3
+
+from databricks.sdk import WorkspaceClient
+import argparse
+import subprocess
+import os
+from jobs import Jobs
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--conf', action="append")
+parser.add_argument('--py-files')
+parser.add_argument('--packages')
+parser.add_argument('python_script', nargs=argparse.REMAINDER)
+
+def read_profile():
+  host = os.getenv("DATABRICKS_HOST")
+  token = os.getenv("DATABRICKS_TOKEN")
+  if host is None:
+    with open(f"{os.path.expanduser('~')}/.databrickscfg") as f:
+      line = f.readline()
+      while(line != "" and line != "[DEFAULT]\n"):
+        line = f.readline()
+      if line != "":
+        host = f.readline().replace(" ", "").split("=")[1]
+        token = f.readline().replace(" ", "").split("=")[1]
+  return {
+    "DATABRICKS_HOST":host,
+    "DATABRICKS_TOKEN":token
+  }
+
+def parse(args=None):
+  args = parser.parse_args(args) if args is not None else parser.parse_args()
+  return args
+
+def run(args=None):
+  args = parse(args)
+  spark_conf = {kv[0]:kv[1] for kv in [conf.split("=") for conf in args.conf]}
+  app_name = spark_conf['spark.app.name']
+  profile = read_profile()
+  py_files = args.py_files
+  if py_files is not None:
+    py_files = py_files.split(",")
+    py_files = [f"{'file://' if f.startswith('/') or f.startswith('.') else ''}{f}" for f in py_files]
+  packages = args.packages
+  if packages is not None:
+    packages = packages.split(",")
+  jobs = Jobs(api_url=profile["DATABRICKS_HOST"], token=profile["DATABRICKS_TOKEN"])
+  jobs.create_python_job(job_name=app_name.replace(":", "_").replace(".", "_"),
+                         python_file=f"{'file://' if args.python_script[0].startswith('/') or args.python_script[0].startswith('.') else ''}{args.python_script[0]}",
+                         parameters=args.python_script[1:] if len(args.python_script)>1 else None,
+                         min_workers=2,
+                         max_workers=4,
+                         libraries=py_files,
+                         packages=packages,
+                         spark_conf=spark_conf)
+
+if __name__ == "__main__":
+  run()
