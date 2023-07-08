@@ -113,7 +113,11 @@ class Jobs:
                         packages=None,
                         instance_profile_arn=None):
     if libraries is not None:
-      libraries = [{"whl":lib} for lib in libraries]
+      whls = [{"whl":lib} for lib in libraries if lib.endswith(".whl")]
+      eggs = [{"egg":lib} for lib in libraries if lib.endswith(".egg")]
+      jars = [{"jar":lib} for lib in libraries if lib.endswith(".jar")]
+      zips = ",".join([lib for lib in libraries if not lib.endswith(".whl") and not lib.endswith(".egg") and not lib.endswith(".jar")])
+      libraries = whls + eggs + jars
     else:
       libraries = []
     if packages is not None:
@@ -139,7 +143,8 @@ class Jobs:
           "source": "GIT",
           "base_parameters": {
             "source": f"{source_zip}",
-            "dest": f"{dest_zip}"
+            "dest": f"{dest_zip}",
+            "py-files": f"{zips}",
           }
         },
         "job_cluster_key":f"{job_name}_cluster",
