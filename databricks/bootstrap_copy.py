@@ -39,25 +39,15 @@ filename = path_splits[1]
 
 # COMMAND ----------
 
-# dbutils.fs.mkdirs(prefixed_dest)
-os.makedirs(dest, 777)
+os.makedirs(dest, 0o770, True)
 
 # COMMAND ----------
 
-temp_path = f"{dest}/{str(uuid.uuid4())}/{filename}"
+dbutils.fs.cp(source, f"{prefixed_dest}/{filename}", True)
 
 # COMMAND ----------
 
-dbutils.fs.cp(source, f"dbfs:{temp_path}", True)
-
-# COMMAND ----------
-
-# dbutils.fs.cp(source, f"{prefixed_dest}/{filename}", True)
-shutil.copy(f"/dbfs{temp_path}", f'{dest}/{filename}')
-
-# COMMAND ----------
-
-os.chmod(f'{dest}/{filename}', 777)
+os.chmod(f'{dest}', 0o770)
 
 # COMMAND ----------
 
