@@ -44,12 +44,16 @@ os.makedirs(dest, 777)
 
 # COMMAND ----------
 
-dbutils.fs.cp(source, f"dbfs:{dest}/{str(uuid.uuid4())}/{filename}", True)
+temp_path = f"{dest}/{str(uuid.uuid4())}/{filename}"
+
+# COMMAND ----------
+
+dbutils.fs.cp(source, f"dbfs:{temp_path}", True)
 
 # COMMAND ----------
 
 # dbutils.fs.cp(source, f"{prefixed_dest}/{filename}", True)
-shutil.copy(f"/dbfs{dest}/{str(uuid.uuid4())}/{filename}", f'{dest}/{filename}')
+shutil.copy(f"/dbfs{temp_path}", f'{dest}/{filename}')
 
 # COMMAND ----------
 
