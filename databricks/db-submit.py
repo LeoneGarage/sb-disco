@@ -43,7 +43,7 @@ def run(args=None):
   py_files = args.py_files
   if py_files is not None:
     py_files = py_files.split(",")
-    py_files = [f"{'file://' if f.startswith('/') or f.startswith('.') else ''}{f}" for f in py_files]
+    py_files = [f"{'file://' if f.startswith('/') or f.startswith('.') or f.startswith('~') else ''}{f}" for f in py_files]
   packages = args.packages
   if packages is not None:
     packages = packages.split(",")
@@ -54,7 +54,7 @@ def run(args=None):
                          source_zip=args.source_zip,
                          dest_zip=args.dest_zip,
                          git_url="https://github.com/LeoneGarage/sb-disco.git",
-                         python_file=f"{'file://' if args.python_script[0].startswith('/') or args.python_script[0].startswith('.') else ''}{args.python_script[0]}",
+                         python_file=f"{'file://' if args.python_script[0].startswith('/') or args.python_script[0].startswith('.') or args.python_script[0].startswith('~') else ''}{args.python_script[0]}",
                          parameters=args.python_script[1:] if len(args.python_script)>1 else None,
                          cluster_spec=cluster_spec,
                          libraries=py_files,
