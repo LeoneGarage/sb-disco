@@ -9,6 +9,11 @@ import os
 
 # COMMAND ----------
 
+class OperationFailed(RuntimeError):
+  pass
+
+# COMMAND ----------
+
 source = dbutils.widgets.get("source")
 dest = dbutils.widgets.get("dest")
 prefixed_dest = dest
@@ -32,7 +37,10 @@ dbutils.fs.cp(source, f"{prefixed_dest}/{filename}", True)
 
 # COMMAND ----------
 
-os.system(f"unzip -o {dest}/{filename} -d {dest}")
+cmd = f"unzip -o {dest}/{filename} -d {dest}"
+result = os.system(cmd)
+if result != 0:
+  raise OperationFailed(f"Command \"{cmd}\" exited with {result}")
 
 # COMMAND ----------
 
