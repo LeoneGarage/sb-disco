@@ -29,10 +29,6 @@ filename = path_splits[1]
 
 # COMMAND ----------
 
-print(os.path.expanduser('~'))
-
-# COMMAND ----------
-
 dbutils.fs.mkdirs(prefixed_dest)
 
 # COMMAND ----------
@@ -44,8 +40,7 @@ dbutils.fs.cp(source, f"{prefixed_dest}/{filename}", True)
 import zipfile
 
 with zipfile.ZipFile(f'{dest}/{filename}', 'r') as zip:
-  # zip.extractall(f'{dest}')
-  zip.extractall(f"{os.path.expanduser('~')}")
+  zip.extractall(f'{dest}')
 
 # COMMAND ----------
 
