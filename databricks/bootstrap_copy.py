@@ -37,7 +37,8 @@ filename = path_splits[1]
 
 # COMMAND ----------
 
-dbutils.fs.mkdirs(prefixed_dest)
+# dbutils.fs.mkdirs(prefixed_dest)
+os.makedirs(dest)
 
 # COMMAND ----------
 
