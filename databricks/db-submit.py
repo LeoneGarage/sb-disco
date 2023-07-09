@@ -24,8 +24,8 @@ def read_profile():
       while(line != "" and line != "[DEFAULT]\n"):
         line = f.readline()
       if line != "":
-        host = f.readline().replace(" ", "").split("=")[1]
-        token = f.readline().replace(" ", "").split("=")[1]
+        host = f.readline().replace(" ", "").split("=")[1].replace("\n", "")
+        token = f.readline().replace(" ", "").split("=")[1].replace("\n", "")
   return {
     "DATABRICKS_HOST":host,
     "DATABRICKS_TOKEN":token
