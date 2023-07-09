@@ -49,7 +49,7 @@ dbutils.fs.cp(source, f"dbfs:{dest}/{str(uuid.uuid4())}/{filename}", True)
 # COMMAND ----------
 
 # dbutils.fs.cp(source, f"{prefixed_dest}/{filename}", True)
-shutil.copy(f"/dbfs/{dest}/{str(uuid.uuid4())}/{filename}", f'{dest}/{filename}')
+shutil.copy(f"/dbfs{dest}/{str(uuid.uuid4())}/{filename}", f'{dest}/{filename}')
 
 # COMMAND ----------
 
