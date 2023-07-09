@@ -29,15 +29,15 @@ filename = path_splits[1]
 
 # COMMAND ----------
 
+print(os.path.expanduser('~'))
+
+# COMMAND ----------
+
 dbutils.fs.mkdirs(prefixed_dest)
 
 # COMMAND ----------
 
 dbutils.fs.cp(source, f"{prefixed_dest}/{filename}", True)
-
-# COMMAND ----------
-
-print(os.path.expanduser('~'))
 
 # COMMAND ----------
 
