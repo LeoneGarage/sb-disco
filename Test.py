@@ -25,7 +25,7 @@ submit.parse("--conf aaa bbb -j".split(" "))
 
 # MAGIC %sh
 # MAGIC
-# MAGIC CLUSTER_SPEC='{ "cluster_name":"", "spark_version":"13.2.x-scala2.12", "instance_pool_id":"0703-011504-era331-pool-7mt36cl2", "driver_instance_pool_id":"0703-011504-era331-pool-7mt36cl2", "data_security_mode": "USER_ISOLATION", "runtime_engine":"STANDARD", "autoscale": { "min_workers":2, "max_workers":8 } }'
+# MAGIC CLUSTER_SPEC='{ "cluster_name":"", "spark_version":"13.2.x-scala2.12", "instance_pool_id":"0703-011504-era331-pool-7mt36cl2", "driver_instance_pool_id":"0703-011504-era331-pool-7mt36cl2", "data_security_mode": "NONE", "runtime_engine":"STANDARD", "autoscale": { "min_workers":2, "max_workers":8 } }'
 # MAGIC
 # MAGIC # CLUSTER_SPEC='{ "cluster_name":"", "spark_version":"13.2.x-scala2.12", "node_type_id":"i3.xlarge", "driver_node_type_id":"m5.xlarge", "enable_elastic_disk":false, "data_security_mode":"NONE", "runtime_engine":"STANDARD", "autoscale": { "min_workers":2, "max_workers":8 } }'
 # MAGIC
