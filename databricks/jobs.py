@@ -2,6 +2,7 @@ import requests
 import copy
 import time
 import random
+import json
 
 class OperationFailed(RuntimeError):
   pass
@@ -12,6 +13,29 @@ class TimeoutError(RuntimeError):
 class Jobs:
   _api_url = None
   _token = None
+  _default_cluster_spec = {
+    "cluster_name":"",
+    "spark_version":"13.2.x-scala2.12",
+    "aws_attributes":{
+      "first_on_demand":1,
+      "availability":"SPOT_WITH_FALLBACK",
+      "zone_id":"auto",
+      "spot_bid_price_percent":100,
+      "ebs_volume_type":"GENERAL_PURPOSE_SSD",
+      "ebs_volume_count":3,
+      "ebs_volume_size":100
+    },
+    "node_type_id":"i3.xlarge",
+    "driver_node_type_id":"m5.xlarge",
+    "enable_elastic_disk":False,
+    "data_security_mode":"NONE",
+    "runtime_engine":"STANDARD",
+    "autoscale": {
+      "min_workers":2,
+      "max_workers":8
+    },
+    "num_workers":8
+  }
 
   def __init__(self, api_url, token):
     self._api_url = api_url
@@ -106,8 +130,7 @@ class Jobs:
                         git_provider="gitHub",
                         git_branch="main",
                         parameters=None,
-                        min_workers = None,
-                        max_workers = None,
+                        cluster_spec=None,
                         spark_conf=None,
                         libraries=None,
                         packages=None,
@@ -124,10 +147,25 @@ class Jobs:
       packages = [{"pypi":{"package":p}} for p in packages]
     else:
       packages = []
-    if min_workers is None:
-      min_workers = 2
-    if max_workers is None:
-      max_workers = 64
+    if cluster_spec is None:
+      cluster_config = self._default_cluster_spec
+    else:
+      cluster_config = json.loads(cluster_spec)
+    existing_cluster_id = cluster_config.get("existing_cluster_id")
+    if existing_cluster_id is None:
+      passed_spark_conf = cluster_config.get("spark_conf")
+      if passed_spark_conf is not None:
+        if spark_conf is None:
+          spark_conf = passed_spark_conf
+        else:
+          for kv in passed_spark_conf.items():
+            if spark_conf.get(kv[0]) is None:
+              spark_conf[kv[0]] = kv[1]
+      cluster_config["spark_conf"] = spark_conf
+      if cluster_config.get("aws_attributes") is None:
+        cluster_config["aws_attributes"] = self._default_cluster_spec["aws_attributes"]
+      if instance_profile_arn is not None:
+        cluster_config["aws_attributes"]["instance_profile_arn"] = instance_profile_arn
     job_config = {
       "name":f"{job_name}",
       "email_notifications":{
@@ -164,33 +202,9 @@ class Jobs:
         "timeout_seconds":0,
         "email_notifications":{}
         }],
-      "job_clusters":[
-        {"job_cluster_key":f"{job_name}_cluster",
-        "new_cluster":{
-          "cluster_name":"",
-          "spark_version":"13.2.x-scala2.12",
-          "spark_conf": spark_conf,
-          "aws_attributes":{
-            "first_on_demand":1,
-            "availability":"SPOT_WITH_FALLBACK",
-            "zone_id":"auto",
-            "instance_profile_arn":instance_profile_arn,
-            "spot_bid_price_percent":100,
-            "ebs_volume_type":"GENERAL_PURPOSE_SSD",
-            "ebs_volume_count":3,
-            "ebs_volume_size":100
-          },
-          "node_type_id":"i3.xlarge",
-          "driver_node_type_id":"m5.xlarge",
-          "enable_elastic_disk":False,
-          "data_security_mode":"NONE",
-          "runtime_engine":"STANDARD",
-          "autoscale": {
-            "min_workers":f"{min_workers}",
-            "max_workers":f"{max_workers}"
-          },
-          "num_workers":f"{max_workers}"
-        }
+      "job_clusters":[{
+        "job_cluster_key":f"{job_name}_cluster",
+        "new_cluster": cluster_config
       }],
       "git_source": {
           "git_url": f"{git_url}",
@@ -199,10 +213,11 @@ class Jobs:
       },
       "format":"MULTI_TASK"
     }
-    if min_workers == max_workers:
-      del job_config['job_clusters'][0]['new_cluster']['autoscale']
-    else:
-      del job_config['job_clusters'][0]['new_cluster']['num_workers']
+    if existing_cluster_id is not None:
+      for t in job_config["tasks"]:
+        del t["job_cluster_key"]
+        t["existing_cluster_id"] = existing_cluster_id
+      del job_config["job_clusters"]
     j = self.find_job_by_name(job_name)
     if j is not None:
       job_id = j['job_id']

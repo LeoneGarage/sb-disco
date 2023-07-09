@@ -10,6 +10,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--source-zip')
 parser.add_argument('--dest-zip')
 parser.add_argument('--conf', action="append")
+parser.add_argument('--cluster-spec')
 parser.add_argument('--py-files')
 parser.add_argument('--packages')
 parser.add_argument('python_script', nargs=argparse.REMAINDER)
@@ -46,16 +47,16 @@ def run(args=None):
   packages = args.packages
   if packages is not None:
     packages = packages.split(",")
+  cluster_spec = args.cluster_spec
   jobs = Jobs(api_url=profile["DATABRICKS_HOST"], token=profile["DATABRICKS_TOKEN"])
   job_id = jobs.create_python_job(job_name=app_name.replace(":", "_").replace(".", "_"),
-                         bootstrap_copy_notebook_path="bootstrap_copy",
+                         bootstrap_copy_notebook_path="databricks/bootstrap_copy",
                          source_zip=args.source_zip,
                          dest_zip=args.dest_zip,
                          git_url="https://github.com/LeoneGarage/sb-disco.git",
                          python_file=f"{'file://' if args.python_script[0].startswith('/') or args.python_script[0].startswith('.') else ''}{args.python_script[0]}",
                          parameters=args.python_script[1:] if len(args.python_script)>1 else None,
-                         min_workers=2,
-                         max_workers=4,
+                         cluster_spec=cluster_spec,
                          libraries=py_files,
                          packages=packages,
                          spark_conf=spark_conf)
