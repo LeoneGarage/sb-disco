@@ -166,6 +166,14 @@ class Jobs:
       cluster_config["spark_conf"] = spark_conf
       if cluster_config.get("aws_attributes") is None:
         cluster_config["aws_attributes"] = self._default_cluster_spec["aws_attributes"]
+        if cluster_config.get("instance_pool_id") is not None:
+          del cluster_config["aws_attributes"]["ebs_volume_type"]
+          del cluster_config["aws_attributes"]["ebs_volume_count"]
+          del cluster_config["aws_attributes"]["ebs_volume_size"]
+          del cluster_config["aws_attributes"]["spot_bid_price_percent"]
+          del cluster_config["aws_attributes"]["zone_id"]
+          del cluster_config["aws_attributes"]["availability"]
+          del cluster_config["aws_attributes"]["first_on_demand"]
       if instance_profile_arn is not None:
         cluster_config["aws_attributes"]["instance_profile_arn"] = instance_profile_arn
     job_config = {

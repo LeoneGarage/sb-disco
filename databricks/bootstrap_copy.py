@@ -37,10 +37,17 @@ dbutils.fs.cp(source, f"{prefixed_dest}/{filename}", True)
 
 # COMMAND ----------
 
-cmd = f"unzip -o {dest}/{filename} -d {dest}"
-result = os.system(cmd)
-if result != 0:
-  raise OperationFailed(f"Command \"{cmd}\" exited with {result}")
+import zipfile
+
+with zipfile.ZipFile(f'{dest}/{filename}', 'r') as zip:
+    zip.extractall(f'{dest}')
+
+# COMMAND ----------
+
+# cmd = f"unzip -o {dest}/{filename} -d {dest}"
+# result = os.system(cmd)
+# if result != 0:
+#   raise OperationFailed(f"Command \"{cmd}\" exited with {result}")
 
 # COMMAND ----------
 
