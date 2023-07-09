@@ -37,6 +37,10 @@ dbutils.fs.cp(source, f"{prefixed_dest}/{filename}", True)
 
 # COMMAND ----------
 
+print(os.path.expanduser('~'))
+
+# COMMAND ----------
+
 import zipfile
 
 with zipfile.ZipFile(f'{dest}/{filename}', 'r') as zip:
