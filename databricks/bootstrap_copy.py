@@ -6,6 +6,8 @@ dbutils.widgets.text("py-files", "", "Additional comma separated list of files n
 # COMMAND ----------
 
 import os
+import uuid
+import shutil
 
 # COMMAND ----------
 
@@ -42,7 +44,12 @@ os.makedirs(dest, 777)
 
 # COMMAND ----------
 
-dbutils.fs.cp(source, f"{prefixed_dest}/{filename}", True)
+dbutils.fs.cp(source, f"dbfs:{dest}/{str(uuid.uuid4())}/{filename}", True)
+
+# COMMAND ----------
+
+# dbutils.fs.cp(source, f"{prefixed_dest}/{filename}", True)
+shutil.copy(f"/dbfs/{dest}/{str(uuid.uuid4())}/{filename}", f'{dest}/{filename}')
 
 # COMMAND ----------
 
