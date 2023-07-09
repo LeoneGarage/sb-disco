@@ -46,6 +46,10 @@ dbutils.fs.cp(source, f"{prefixed_dest}/{filename}", True)
 
 # COMMAND ----------
 
+os.chmod(f'{dest}/{filename}', 777)
+
+# COMMAND ----------
+
 import zipfile
 
 with zipfile.ZipFile(f'{dest}/{filename}', 'r') as zip:
