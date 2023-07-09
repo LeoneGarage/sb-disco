@@ -44,7 +44,8 @@ dbutils.fs.cp(source, f"{prefixed_dest}/{filename}", True)
 import zipfile
 
 with zipfile.ZipFile(f'{dest}/{filename}', 'r') as zip:
-    zip.extractall(f'{dest}')
+  # zip.extractall(f'{dest}')
+  zip.extractall(f"{os.path.expanduser('~')}")
 
 # COMMAND ----------
 
