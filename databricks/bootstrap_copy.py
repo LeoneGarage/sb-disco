@@ -18,7 +18,7 @@ source = dbutils.widgets.get("source")
 dest = dbutils.widgets.get("dest")
 prefixed_dest = dest
 py_files = dbutils.widgets.get("py-files").split(",")
-if prefixed_dest.startswith("/") or prefixed_dest.startswith("."):
+if prefixed_dest.startswith("/") or prefixed_dest.startswith(".") or prefixed_dest.startswith("~"):
   prefixed_dest = f"file://{prefixed_dest}"
 py_files = [f"{'file://' if f.startswith('/') or f.startswith('.') or f.startswith('~') else ''}{f}" for f in py_files]
 
