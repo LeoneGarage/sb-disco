@@ -144,7 +144,9 @@ class Jobs:
     else:
       libraries = []
     if packages is not None:
-      packages = [{"pypi":{"package":p}} for p in packages]
+      pypis = [{"pypi":{"package":p}} for p in packages if not ":" in p]
+      mavens = [{"maven":{"coordinates":p}} for p in packages if ":" in p]
+      packages = pypis + mavens
     else:
       packages = []
     if cluster_spec is None:
