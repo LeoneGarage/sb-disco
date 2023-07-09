@@ -20,7 +20,15 @@ prefixed_dest = dest
 py_files = dbutils.widgets.get("py-files").split(",")
 if prefixed_dest.startswith("/") or prefixed_dest.startswith("."):
   prefixed_dest = f"file://{prefixed_dest}"
-py_files = [f"{'file://' if f.startswith('/') or f.startswith('.') else ''}{f}" for f in py_files]
+py_files = [f"{'file://' if f.startswith('/') or f.startswith('.') or f.startswith('~') else ''}{f}" for f in py_files]
+
+# COMMAND ----------
+
+home_dir = os.path.expanduser('~')
+print(f"Home directory is {home_dir}")
+dest = dest.replace("~", home_dir)
+prefixed_dest = prefixed_dest.replace("~", home_dir)
+py_files = [f.replace("~", home_dir) for f in py_files]
 
 # COMMAND ----------
 
@@ -41,13 +49,6 @@ import zipfile
 
 with zipfile.ZipFile(f'{dest}/{filename}', 'r') as zip:
   zip.extractall(f'{dest}')
-
-# COMMAND ----------
-
-# cmd = f"unzip -o {dest}/{filename} -d {dest}"
-# result = os.system(cmd)
-# if result != 0:
-#   raise OperationFailed(f"Command \"{cmd}\" exited with {result}")
 
 # COMMAND ----------
 
