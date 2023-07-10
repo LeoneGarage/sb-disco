@@ -13,7 +13,7 @@ parser.add_argument('--conf', action="append")
 parser.add_argument('--cluster-spec')
 parser.add_argument('--py-files')
 parser.add_argument('--packages')
-parser.add_argument('--wait-for-completion', )
+parser.add_argument('--wait-for-completion')
 parser.add_argument('python_script', nargs=argparse.REMAINDER)
 
 def read_profile():
