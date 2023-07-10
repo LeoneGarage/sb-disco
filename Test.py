@@ -1,6 +1,12 @@
 # Databricks notebook source
 # MAGIC %sh
 # MAGIC
+# MAGIC curl https://github.com/LeoneGarage/sb-disco/raw/main/db_submit.zip -L -o /dbfs/Users/leon.eller@databricks.com/zips/db_submit.zip
+
+# COMMAND ----------
+
+# MAGIC %sh
+# MAGIC
 # MAGIC echo $DATABRICKS_TOKEN
 
 # COMMAND ----------
@@ -63,7 +69,7 @@ import submit
 # MAGIC
 # MAGIC # export DATABRICKS_HOST=https://e2-demo-field-eng.cloud.databricks.com
 # MAGIC # export DATABRICKS_TOKEN=<PAT Token>
-# MAGIC mkdir -p ~/app/bronze/bronze_bwm.dummy_two/db_submit; cp /dbfs/Users/leon.eller@databricks.com/zips/db_submit.zip ~/app/bronze/bronze_bwm.dummy_two/db_submit/db_submit.zip;unzip -o ~/app/bronze/bronze_bwm.dummy_two/db_submit/db_submit.zip -d ~/app/bronze/bronze_bwm.dummy_two/db_submit
+# MAGIC mkdir -p ~/app/bronze/bronze_bwm.dummy_two/db_submit;cp /dbfs/Users/leon.eller@databricks.com/zips/db_submit.zip ~/app/bronze/bronze_bwm.dummy_two/db_submit/db_submit.zip;unzip -o ~/app/bronze/bronze_bwm.dummy_two/db_submit/db_submit.zip -d ~/app/bronze/bronze_bwm.dummy_two/db_submit
 # MAGIC ~/app/bronze/bronze_bwm.dummy_two/db_submit/bin/db-submit --wait-for-completion false --source-zip dbfs:/Users/leon.eller@databricks.com/zips/my_app.zip --dest-zip /tmp/app/bronze/bronze_bwm.dummy_two --cluster-spec "$CLUSTER_SPEC" --conf spark.app.name=bronze_bwm.dummy_two-2023-07-07T04:38:10.717 --conf spark.yarn.stagingDir=hdfs://$(hostname -f):8020/user/hadoop --conf spark.yarn.appMasterEnv.SPARK_HOME=/usr/lib/spark --conf spark.yarn.submit.waitAppCompletion=true --conf spark.port.maxRetries=1000 --conf spark.yarn.tags=bronze_bwm.dummy_two-2023-07-07T04:38:10.717 --conf spark.executor.asyncEagerFileSystemInit.paths=s3://datalake-python-repo-ap-southeast-2-dv2t4qi6u0ds --conf spark.kryoserializer.buffer.max=1024m --conf spark.default.parallelism=512 --conf spark.sql.adaptive.coalescePartitions.initialPartitionNum=512 --conf spark.dynamicAllocation.maxExecutors=6 --py-files /tmp/app/bronze/bronze_bwm.dummy_two/my_app.zip --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.2,org.apache.spark:spark-avro_2.12:3.3.2,com.fasterxml.jackson.core:jackson-databind:2.12.0 /tmp/app/bronze/bronze_bwm.dummy_two/my_app/app/main.py --job demo_app --job-type bronze --job-args region_name=ap-southeast-2 pipeline_name=bronze_bwm.dummy_two pipeline_run_id=bronze_bwm.dummy_two-2023-07-07T04:38:10.717 kafka_topic=dummy_two load_type=INCR dependencies=bronze_bwm.dummy_one bronze_bwm.dummy_one.batchId=1688383197 bronze_bwm.dummy_one.delta_table_path=s3://dl-bronze-bwm-pii-prd-lsmjik7uyv8/bronze_bwm/dummy_one bronze_bwm.dummy_one.None=None
 
 # COMMAND ----------
