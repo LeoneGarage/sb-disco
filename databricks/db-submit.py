@@ -13,6 +13,7 @@ parser.add_argument('--conf', action="append")
 parser.add_argument('--cluster-spec')
 parser.add_argument('--py-files')
 parser.add_argument('--packages')
+parser.add_argument('--wait-for-completion', )
 parser.add_argument('python_script', nargs=argparse.REMAINDER)
 
 def read_profile():
@@ -37,6 +38,11 @@ def parse(args=None):
 
 def run(args=None):
   args = parse(args)
+  wait_for_completion = args.wait_for_completion
+  if wait_for_completion == 'true' or wait_for_completion == '1':
+    wait_for_completion = True
+  else:
+    wait_for_completion = False
   spark_conf = {kv[0]:kv[1] for kv in [conf.split("=") for conf in args.conf]}
   app_name = spark_conf['spark.app.name']
   profile = read_profile()
@@ -61,8 +67,12 @@ def run(args=None):
                          packages=packages,
                          spark_conf=spark_conf)
   run_id = jobs.run_now(job_id)["run_id"]
-  result = jobs.wait_get_run_job_terminated_or_skipped(run_id)
-  state = result["state"]["result_state"]
+  state = None
+  if wait_for_completion is True:
+    result = jobs.wait_get_run_job_terminated_or_skipped(run_id)
+    state = result["state"]["result_state"]
+  else:
+    state = run_id
   return state
 
 if __name__ == "__main__":
