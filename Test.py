@@ -24,9 +24,32 @@ import submit
 # MAGIC # CLUSTER_SPEC='{ "cluster_name":"", "spark_version":"13.2.x-scala2.12", "instance_pool_id":"0703-011504-era331-pool-7mt36cl2", "driver_instance_pool_id":"0703-011504-era331-pool-7mt36cl2", "data_security_mode": "USER_ISOLATION", "runtime_engine":"STANDARD", "autoscale": { "min_workers":2, "max_workers":8 } }'
 # MAGIC
 # MAGIC CLUSTER_SPEC='{ "cluster_name":"", "spark_version":"13.2.x-scala2.12", "spark_conf": {
-# MAGIC    "spark.hadoop.fs.s3a.credentialsType": "AssumeRole spark.sql.legacy.parquet.int96RebaseModeInRead LEGACY spark.hadoop.fs.s3.impl com.databricks.s3a.S3AFileSystem spark.hadoop.fs.s3a.acl.default BucketOwnerFullControl spark.databricks.hive.metastore.glueCatalog.enabled true spark.hadoop.fs.s3n.impl com.databricks.s3a.S3AFileSystem spark.sql.legacy.parquet.datetimeRebaseModeInWrite CORRECTED spark.hadoop.fs.s3a.stsAssumeRole.arn arn:aws:iam::207837559336:role/datalake-l2-ed-edl2databricksiam-Cat2-ProducerRole spark.hadoop.fs.s3a.canned.acl BucketOwnerFullControl spark.speculation false spark.hadoop.hive.metastore.glue.catalogid 207837559336 spark.sql.parquet.writeLegacyFormat true spark.hadoop.fs.s3a.impl com.databricks.s3a.S3AFileSystem spark.sql.hive.metastore.jars maven spark.sql.hive.metastore.version 1.2.1 spark.databricks.delta.optimizeWrite.enabled true",
-# MAGIC     "Environment": "variablescicd_notebook_path_prefix=CICD/30_delta_prod/ environment=prod deltalake_assume_role_arn=arn:aws:iam::207837559336:role/datalake-l2-ed-edl2databricksiam-Cat2-ProducerRole deltalake_catalogue_id=207837559336"
-# MAGIC   }, "node_type_id":"i3.xlarge", "driver_node_type_id":"m5.xlarge", "enable_elastic_disk":false, "data_security_mode":"NONE", "runtime_engine":"STANDARD", "autoscale": { "min_workers":2, "max_workers":8 } }'
+# MAGIC         "spark.hadoop.fs.s3a.credentialsType": "AssumeRole",
+# MAGIC         "spark.sql.legacy.parquet.int96RebaseModeInRead": "LEGACY",
+# MAGIC         "spark.hadoop.fs.s3.impl": "com.databricks.s3a.S3AFileSystem",
+# MAGIC         "spark.hadoop.fs.s3a.acl.default": "BucketOwnerFullControl",
+# MAGIC         "spark.databricks.hive.metastore.glueCatalog.enabled": "true",
+# MAGIC         "spark.hadoop.fs.s3n.impl": "com.databricks.s3a.S3AFileSystem",
+# MAGIC         "spark.sql.legacy.parquet.datetimeRebaseModeInWrite": "CORRECTED",
+# MAGIC         "spark.hadoop.fs.s3a.stsAssumeRole.arn": "arn:aws:iam::207837559336:role/datalake-l2-ed-edl2databricksiam-Cat2-ProducerRole",
+# MAGIC         "spark.hadoop.fs.s3a.canned.acl": "BucketOwnerFullControl",
+# MAGIC         "spark.speculation": "false",
+# MAGIC         "spark.hadoop.hive.metastore.glue.catalogid": "207837559336",
+# MAGIC         "spark.master": "local[*, 4]",
+# MAGIC         "spark.sql.parquet.writeLegacyFormat": "true",
+# MAGIC         "spark.databricks.cluster.profile": "singleNode",
+# MAGIC         "spark.hadoop.fs.s3a.impl": "com.databricks.s3a.S3AFileSystem",
+# MAGIC         "spark.sql.hive.metastore.jars": "maven",
+# MAGIC         "spark.sql.hive.metastore.version": "1.2.1",
+# MAGIC         "spark.databricks.delta.optimizeWrite.enabled": "true"
+# MAGIC     },
+# MAGIC     "spark_env_vars": {
+# MAGIC         "deltalake_catalogue_id": "207837559336",
+# MAGIC         "deltalake_assume_role_arn": "arn:aws:iam::207837559336:role/datalake-l2-ed-edl2databricksiam-Cat2-ProducerRole",
+# MAGIC         "environment": "prod",
+# MAGIC         "cicd_notebook_path_prefix": "CICD/30_delta_prod/"
+# MAGIC     },
+# MAGIC     "node_type_id":"i3.xlarge", "driver_node_type_id":"m5.xlarge", "enable_elastic_disk":false, "data_security_mode":"NONE", "runtime_engine":"STANDARD", "autoscale": { "min_workers":2, "max_workers":8 } }'
 # MAGIC
 # MAGIC # export DATABRICKS_HOST=https://e2-demo-field-eng.cloud.databricks.com
 # MAGIC # export DATABRICKS_TOKEN=<PAT Token>
