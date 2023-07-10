@@ -161,8 +161,7 @@ class Jobs:
           spark_conf = passed_spark_conf
         else:
           for kv in passed_spark_conf.items():
-            if spark_conf.get(kv[0]) is None:
-              spark_conf[kv[0]] = kv[1]
+            spark_conf[kv[0]] = kv[1]
       cluster_config["spark_conf"] = spark_conf
       if cluster_config.get("aws_attributes") is None:
         cluster_config["aws_attributes"] = self._default_cluster_spec["aws_attributes"]
