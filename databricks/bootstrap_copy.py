@@ -55,9 +55,3 @@ import zipfile
 
 with zipfile.ZipFile(f'{dest}/{filename}', 'r') as zip:
   zip.extractall(f'{dest}')
-
-# COMMAND ----------
-
-for f in py_files:
-  dbutils.fs.ls(f) # check if file exists because addPyFile() does nothing if it doesn't or if it can't be accessed
-  spark.sparkContext.addPyFile(f)
