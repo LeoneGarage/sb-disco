@@ -211,9 +211,9 @@ class Jobs:
           "python_file":python_file,
           "parameters":parameters
         },
-        "depends_on":{
-          "task_key": "bootstrap_copy"
-        },
+        # "depends_on":{
+        #   "task_key": "bootstrap_copy"
+        # },
         "libraries":libraries + packages,
         "job_cluster_key":f"{job_name}_cluster",
         "timeout_seconds":0,
