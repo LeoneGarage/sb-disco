@@ -182,6 +182,21 @@ class Jobs:
           del cluster_config["aws_attributes"]["first_on_demand"]
       if instance_profile_arn is not None:
         cluster_config["aws_attributes"]["instance_profile_arn"] = instance_profile_arn
+      bootstrap_copy_task = []
+    # bootstrap_copy_task = [{"task_key":"bootstrap_copy",
+    #     "notebook_task": {
+    #       "notebook_path": f"{bootstrap_copy_notebook_path}",
+    #       "source": "GIT",
+    #       "base_parameters": {
+    #         "source": f"{source_zip}",
+    #         "dest": f"{dest_zip}",
+    #         "py-files": f"{zips}",
+    #       }
+    #     },
+    #     "job_cluster_key":f"{job_name}_cluster",
+    #     "timeout_seconds":0,
+    #     "email_notifications":{}
+    #     }]
     job_config = {
       "name":f"{job_name}",
       "email_notifications":{
@@ -190,21 +205,7 @@ class Jobs:
       "webhook_notifications":{},
       "timeout_seconds":0,
       "max_concurrent_runs":1,
-      "tasks":[
-        {"task_key":"bootstrap_copy",
-        "notebook_task": {
-          "notebook_path": f"{bootstrap_copy_notebook_path}",
-          "source": "GIT",
-          "base_parameters": {
-            "source": f"{source_zip}",
-            "dest": f"{dest_zip}",
-            "py-files": f"{zips}",
-          }
-        },
-        "job_cluster_key":f"{job_name}_cluster",
-        "timeout_seconds":0,
-        "email_notifications":{}
-        },
+      "tasks":bootstrap_copy_task + [
         {"task_key":f"{job_name}",
         "spark_python_task":{
           "python_file":python_file,
