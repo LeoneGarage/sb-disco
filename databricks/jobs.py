@@ -166,7 +166,7 @@ class Jobs:
       if submit_pyFiles is None:
         submit_pyFiles = ""
       if zips is not None:
-        submit_pyFiles = ",".join([submit_pyFiles, zips])
+        submit_pyFiles = ("," if len(submit_pyFiles) > 0 else "") + zips
       if submit_pyFiles is not None and submit_pyFiles != "":
         spark_conf["spark.submit.pyFiles"] = submit_pyFiles
       cluster_config["spark_conf"] = spark_conf
