@@ -162,6 +162,13 @@ class Jobs:
         else:
           for kv in passed_spark_conf.items():
             spark_conf[kv[0]] = kv[1]
+      submit_pyFiles = spark_conf.get("spark.submit.pyFiles")
+      if submit_pyFiles is None:
+        submit_pyFiles = ""
+      if zips is not None:
+        submit_pyFiles = ",".join([submit_pyFiles, zips])
+      if submit_pyFiles is not None and submit_pyFiles != "":
+        spark_conf["spark.submit.pyFiles"] = submit_pyFiles
       cluster_config["spark_conf"] = spark_conf
       if cluster_config.get("aws_attributes") is None:
         cluster_config["aws_attributes"] = self._default_cluster_spec["aws_attributes"]
